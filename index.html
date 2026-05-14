@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediFlow - Premium Healthcare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* === GLOBAL SETTINGS === */
+        body { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; overflow-x: hidden; transition: background-color 0.4s; }
+        .view-section { display: none; min-height: 100vh; width: 100%; }
+        .view-section.active { display: block; animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        body.login-mode { background-color: #0c1a2c; overflow: hidden; }
+
+        /* =========================================
+           0. LOGIN PAGE (Split Screen Premium)
+        ========================================= */
+        .login-wrapper { height: 100vh; display: flex; justify-content: center; align-items: center; background: #0c1a2c; }
+        .login-split { width: 100%; max-width: 1000px; display: flex; background: white; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); overflow: hidden; }
+        .log-left { flex: 1.1; padding: 60px; background: white; }
+        .log-right { flex: 0.9; background: #e0f2fe; padding: 60px; text-align: center; display: flex; flex-direction: column; justify-content: center; color: #0f3057; }
+        .med-input { border: 2px solid #f1f5f9; border-radius: 12px; padding: 14px; width: 100%; margin-bottom: 20px; font-family: 'Poppins', sans-serif; background: #f8fafc; outline: none; transition: 0.3s;}
+        .med-input:focus { border-color: #0ea5e9; background: white; }
+        .btn-log { background: #0f3057; color: white; border-radius: 12px; padding: 16px; font-weight: 600; width: 100%; border: none; transition: 0.3s; }
+        .btn-log:hover { background: #1e40af; }
+
+        /* =========================================
+           1. PASIEN (ASHLEY STYLE - TEAL)
+        ========================================= */
+        .bg-pasien { background-color: #eef5f5; font-family: 'Quicksand', sans-serif; }
+        .ashley-container { display: flex; padding: 20px; gap: 20px; height: 100vh; box-sizing: border-box; }
+        
+        .ash-sidebar { width: 100px; background: #6cb7b7; border-radius: 35px; display: flex; flex-direction: column; align-items: center; padding: 30px 0; color: white; }
+        .ash-sidebar .nav-icon { width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; border-radius: 15px; font-size: 1.4rem; margin-bottom: 15px; cursor: pointer; color: rgba(255,255,255,0.7); transition: 0.3s;}
+        .ash-sidebar .nav-icon.active { background: rgba(255,255,255,0.2); color: white; }
+        
+        .ash-main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 10px 20px; }
+        .ash-card-wel { background: linear-gradient(135deg, #57b7b7, #74c6c6); border-radius: 30px; padding: 30px; color: white; height: 100%; position: relative; overflow: hidden;}
+        .ash-card-res { background: linear-gradient(135deg, #7b9df2, #9bbaff); border-radius: 30px; padding: 30px; color: white; height: 100%; }
+        .ash-mini-card { background: white; border-radius: 20px; padding: 20px; display: flex; align-items: center; gap: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.02); height: 100%;}
+        
+        .ash-calendar { background: white; border-radius: 30px; padding: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.02); margin-top: 15px;}
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; gap: 10px 0; margin-top: 15px;}
+        .cal-day { font-weight: 600; color: #555; width: 40px; height: 40px; margin: 0 auto; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer;}
+        .cal-day.active { background: #6cb7b7; color: white; box-shadow: 0 5px 15px rgba(108, 183, 183, 0.4);}
+        .cal-day.text-muted { color: #ccc; font-weight: 400;}
+        
+        .ash-right { width: 340px; background: white; border-radius: 35px; padding: 30px; box-shadow: -5px 0 20px rgba(0,0,0,0.02); overflow-y: auto; }
+        .kk-tab { background: #f0f5f5; border-radius: 12px; padding: 10px; text-align: center; font-size: 0.85rem; font-weight: 600; cursor: pointer; color: #777; flex: 1; transition: 0.3s;}
+        .kk-tab.active { background: white; color: #6cb7b7; box-shadow: 0 2px 10px rgba(0,0,0,0.05);}
+
+        /* =========================================
+           2. DOKTER (ISTIAK AHMED STYLE - SOLID BLUE)
+        ========================================= */
+        .bg-dokter { background-color: #f0f5fa; }
+        .ist-container { display: flex; padding: 20px; gap: 20px; height: 100vh; box-sizing: border-box; }
+        
+        .ist-sidebar { width: 260px; background: #0d6efd; border-radius: 30px; color: white; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; }
+        .ist-profile { text-align: center; margin-bottom: 40px; }
+        .ist-profile img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.3); margin-bottom: 15px; }
+        .ist-nav { width: 100%; border-radius: 15px; padding: 15px 20px; color: rgba(255,255,255,0.7); margin-bottom: 10px; cursor: pointer; transition: 0.3s; font-weight: 500; display: flex; align-items: center;}
+        .ist-nav.active { background: rgba(255,255,255,0.15); color: white; font-weight: 600;}
+        
+        .ist-main { flex: 1; overflow-y: auto; padding: 10px; }
+        .ist-stat-card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.02); height: 100%; display: flex; flex-direction: column; justify-content: center;}
+        
+        .patient-card { background: white; border-radius: 25px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
+        .pc-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .pc-header img { width: 50px; height: 50px; border-radius: 50%; }
+        .pc-table { width: 100%; font-size: 0.85rem; }
+        .pc-table td { padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+        .pc-table tr:last-child td { border-bottom: none; }
+        .status-badge { padding: 5px 12px; border-radius: 20px; font-weight: 600; font-size: 0.75rem; }
+
+        /* =========================================
+           3. ADMIN (CREXTIO STYLE - LIGHT BLUE)
+        ========================================= */
+        .bg-admin { background-color: #eaf1f8; }
+        .crex-container { padding: 40px; max-width: 1400px; margin: 0 auto; min-height: 100vh;}
+        
+        .crex-topnav { display: flex; justify-content: center; margin-bottom: 40px; }
+        .crex-pill { background: white; border-radius: 50px; padding: 10px 15px; display: inline-flex; gap: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
+        .crex-item { padding: 8px 20px; border-radius: 30px; font-weight: 600; font-size: 0.9rem; color: #64748b; cursor: pointer;}
+        .crex-item.active { background: #0f3057; color: white; }
+
+        .crex-profile-card { background: linear-gradient(to bottom, #dbeafe, #bae6fd); border-radius: 30px; padding: 30px; text-align: center; height: 100%; position: relative; overflow: hidden;}
+        .crex-profile-card img { width: 120px; height: 120px; border-radius: 50%; margin-bottom: 20px; border: 4px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.1);}
+        
+        .crex-stat-box { background: white; border-radius: 30px; padding: 30px; height: 100%; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
+        
+        /* Kartu Biru Gelap Sesuai Crextio (Diubah untuk Cek BPJS) */
+        .crex-dark-card { background: #0f3057; border-radius: 30px; padding: 30px; color: white; height: 100%; box-shadow: 0 10px 30px rgba(15, 48, 87, 0.3);}
+        .bpjs-input-group { background: rgba(255,255,255,0.1); border-radius: 15px; padding: 5px; display: flex; margin-bottom: 20px;}
+        .bpjs-input-group input { background: transparent; border: none; color: white; padding: 10px 15px; flex: 1; outline: none;}
+        .bpjs-input-group input::placeholder { color: rgba(255,255,255,0.5); }
+        .bpjs-input-group button { background: #0ea5e9; border: none; border-radius: 12px; color: white; padding: 0 20px; font-weight: 600;}
+    </style>
+</head>
+<body class="login-mode">
+
+    <div id="viewLogin" class="view-section active login-wrapper">
+        <div class="login-split">
+            <div class="log-left">
+                <div class="d-flex align-items-center mb-4">
+                    <i class="bi bi-hospital fs-2 text-primary me-2"></i>
+                    <h3 class="fw-bold text-primary mb-0">MediFlow</h3>
+                </div>
+                <h3 class="fw-bold mb-2">Login Sistem Terpadu</h3>
+                <p class="text-muted small mb-4">Masuk untuk mengakses portal manajemen rumah sakit.</p>
+                
+                <label class="fw-bold small mb-2 text-dark">Username</label>
+                <input type="text" id="loginUsername" class="med-input" placeholder="Ketik: pasien / dokter / admin">
+                
+                <label class="fw-bold small mb-2 text-dark">Password</label>
+                <input type="password" class="med-input" placeholder="••••••••">
+                
+                <button onclick="prosesLogin()" class="btn-log mb-4">Login Sekarang →</button>
+                
+                <div class="p-3 rounded-3 small text-start" style="background: rgba(14, 165, 233, 0.1); border: 1px solid rgba(14, 165, 233, 0.2);">
+                    <b class="text-primary"><i class="bi bi-info-circle me-2"></i>Akun Demo:</b> Ketik <b>pasien</b>, <b>dokter</b>, atau <b>admin</b> untuk melihat 3 desain UI/UX yang berbeda.
+                </div>
+            </div>
+            <div class="log-right">
+                <i class="bi bi-shield-check" style="font-size: 4rem;"></i>
+                <h3 class="fw-bold mt-3">Premium Healthcare</h3>
+                <p class="opacity-75 small px-4 mt-2">Sistem terintegrasi untuk pendaftaran, rekam medis, dan administrasi rumah sakit.</p>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="viewPasien" class="view-section bg-pasien">
+        <div class="ashley-container">
+            
+            <div class="ash-sidebar">
+                <div class="fw-bold fs-5 mb-5 text-center lh-1"><i class="bi bi-plus-lg fs-3 d-block mb-1"></i>Med<br>Board</div>
+                <div class="nav-icon active"><i class="bi bi-house-door"></i></div>
+                <div class="nav-icon"><i class="bi bi-heart"></i></div>
+                <div class="nav-icon"><i class="bi bi-calendar4"></i></div>
+                <div class="nav-icon mt-auto" onclick="logout()"><i class="bi bi-box-arrow-right"></i></div>
+            </div>
+
+            <div class="ash-main">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-0" style="color: #2c3e50;">Hello, <span id="ashNameTitle">Ashley!</span></h2>
+                        <p class="text-muted small mb-0">12 April 2026, Monday</p>
+                    </div>
+                    <div class="bg-white rounded-pill px-4 py-2 shadow-sm small text-muted"><i class="bi bi-search me-2"></i>Search</div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-7">
+                        <div class="ash-card-wel shadow-sm">
+                            <h4 class="fw-bold mb-3">Welcome back...</h4>
+                            <p class="small opacity-75 mb-4">I hope you're well,<br>how can I help you?</p>
+                            <button class="btn btn-light rounded-circle text-info fw-bold" style="width: 40px; height: 40px;">+</button>
+                            <i class="bi bi-person-hearts" style="position: absolute; right: 20px; bottom: -20px; font-size: 10rem; opacity: 0.15;"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="ash-card-res shadow-sm">
+                            <h5 class="fw-bold mb-2">Latest results</h5>
+                            <p class="small opacity-75 mb-3">Some parameters need improvement!</p>
+                            <div class="small fw-bold d-flex justify-content-between mb-1"><span>Glucose</span><span>82 mg</span></div>
+                            <div class="progress mb-2" style="height: 6px; background: rgba(255,255,255,0.3);"><div class="progress-bar bg-white" style="width: 80%"></div></div>
+                            <div class="small fw-bold d-flex justify-content-between mb-1"><span>BUN</span><span>10.5</span></div>
+                            <div class="progress mb-2" style="height: 6px; background: rgba(255,255,255,0.3);"><div class="progress-bar bg-warning" style="width: 40%"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <div class="ash-mini-card">
+                            <div style="background: #eef7f7; color: #57b7b7; width: 50px; height: 50px; border-radius: 15px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem;"><i class="bi bi-clipboard2-check"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-0 text-dark">Diagnosis</h6>
+                                <span class="small text-muted" id="ashDiag" style="font-size: 0.75rem;">Lists of diseases</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="ash-mini-card">
+                            <div style="background: #f0f4ff; color: #7b9df2; width: 50px; height: 50px; border-radius: 15px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem;"><i class="bi bi-droplet-half"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-0 text-dark">Tests</h6>
+                                <span class="small text-muted" style="font-size: 0.75rem;">Archive of tests</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="ash-mini-card">
+                            <div style="background: #fff9e6; color: #f2c94c; width: 50px; height: 50px; border-radius: 15px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem;"><i class="bi bi-capsule"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-0 text-dark">Drugs</h6>
+                                <span class="small text-muted" id="ashDrugs" style="font-size: 0.75rem;">Prescribed med</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ash-calendar">
+                    <h5 class="fw-bold text-center mb-4 text-dark">September</h5>
+                    <div class="cal-grid small text-muted mb-2">
+                        <span>mo</span><span>tu</span><span>we</span><span>th</span><span>fr</span><span>sa</span><span>su</span>
+                    </div>
+                    <div class="cal-grid">
+                        <div class="cal-day text-muted">28</div><div class="cal-day text-muted">29</div><div class="cal-day text-muted">30</div><div class="cal-day text-muted">31</div>
+                        <div class="cal-day">1</div><div class="cal-day">2</div><div class="cal-day">3</div>
+                        <div class="cal-day">4</div><div class="cal-day">5</div><div class="cal-day">6</div><div class="cal-day">7</div>
+                        <div class="cal-day">8</div><div class="cal-day">9</div><div class="cal-day">10</div>
+                        <div class="cal-day">11</div><div class="cal-day">12</div><div class="cal-day">13</div><div class="cal-day">14</div>
+                        <div class="cal-day">15</div><div class="cal-day">16</div><div class="cal-day">17</div>
+                        <div class="cal-day">18</div><div class="cal-day">19</div><div class="cal-day">20</div><div class="cal-day active" id="ashAppt">21</div>
+                        <div class="cal-day">22</div><div class="cal-day">23</div><div class="cal-day">24</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ash-right">
+                <div class="d-flex gap-2 bg-light p-1 rounded-4 mb-4">
+                    <div class="kk-tab active" onclick="gantiAshley('Ashley', 'Anak', 'A+', '164cm', '57kg', 'Flu Ringan', 'Vitamins', '21', this)">Anak</div>
+                    <div class="kk-tab" onclick="gantiAshley('John', 'Ayah', 'O', '175cm', '78kg', 'Hipertensi', 'Amlodipine', '14', this)">Ayah</div>
+                    <div class="kk-tab" onclick="gantiAshley('Jane', 'Ibu', 'B', '160cm', '62kg', 'Asam Lambung', 'Antasida', '07', this)">Ibu</div>
+                </div>
+
+                <div class="text-center">
+                    <img src="https://ui-avatars.com/api/?name=Ashley&background=6cb7b7&color=fff" style="width:80px; height:80px; border-radius:50%; margin-bottom:10px;" id="ashFoto">
+                    <h5 class="fw-bold mb-0 text-dark" id="ashNameProfile">Ashley Black</h5>
+                    <p class="small text-muted mb-0" id="ashEmail">ashley.black@gmail.com</p>
+                </div>
+
+                <div class="d-flex justify-content-between text-center mt-4 mb-4">
+                    <div><span class="small text-muted d-block">Blood</span><h6 class="fw-bold mb-0 text-dark" id="ashBlood">A+</h6></div>
+                    <div><span class="small text-muted d-block">Height</span><h6 class="fw-bold mb-0 text-dark" id="ashHeight">164cm</h6></div>
+                    <div><span class="small text-muted d-block">Weight</span><h6 class="fw-bold mb-0 text-dark" id="ashWeight">57kg</h6></div>
+                </div>
+
+                <div class="mb-4">
+                    <h6 class="fw-bold small mb-2 text-dark">17/04/2026</h6>
+                    <h6 class="fw-bold mb-2 text-dark" style="font-size: 0.9rem;">Recent Results</h6>
+                    <p class="text-muted" style="font-size: 0.75rem;">Your heart rate is considered normal, most healthy relaxed adults have a resting heart...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="viewDokter" class="view-section bg-dokter">
+        <div class="ist-container">
+            
+            <div class="ist-sidebar shadow-sm">
+                <div class="ist-profile">
+                    <img src="https://ui-avatars.com/api/?name=Dr+Istiak&background=fff&color=0d6efd">
+                    <h5 class="fw-bold mb-0">Istiak Ahmed</h5>
+                    <p class="small opacity-75 mb-0" style="font-size: 0.75rem;">istiak.mediflow@rs.com</p>
+                </div>
+                <div class="ist-nav active"><i class="bi bi-people-fill me-3"></i>Patients</div>
+                <div class="ist-nav"><i class="bi bi-grid-fill me-3"></i>Dashboard</div>
+                <div class="ist-nav"><i class="bi bi-calendar-event me-3"></i>Schedule</div>
+                <div class="ist-nav mt-auto text-danger" onclick="logout()"><i class="bi bi-box-arrow-left me-3"></i>Logout</div>
+            </div>
+
+            <div class="ist-main">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="fw-bold mb-0 text-dark">Patients List</h3>
+                    <div class="d-flex gap-3">
+                        <div class="bg-white rounded-pill px-4 py-2 shadow-sm text-muted small"><i class="bi bi-search me-2"></i>Search Patients</div>
+                        <button class="btn btn-dark rounded-pill px-4" style="background: #0f3057;">+ Add Patients</button>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="ist-stat-card text-white" style="background: #0d6efd;">
+                            <h2 class="fw-bold mb-0">1,250k</h2>
+                            <p class="small mb-0 opacity-75">Total Patients</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="ist-stat-card">
+                            <h2 class="fw-bold mb-0 text-danger">58</h2>
+                            <p class="small text-muted mb-0">Critical</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="ist-stat-card">
+                            <h6 class="fw-bold mb-2">Patients status</h6>
+                            <div style="height: 40px; background: linear-gradient(to right, #e2e8f0, #dcfce7, #f1f5f9); border-radius: 10px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="patient-card">
+                            <div class="pc-header">
+                                <img src="https://ui-avatars.com/api/?name=Leslie+Alexander&background=e0f2fe&color=0284c7">
+                                <div><h6 class="fw-bold mb-0 text-dark">Leslie Alexander</h6><span class="small text-primary"><i class="bi bi-telephone"></i> Phone</span></div>
+                            </div>
+                            <table class="pc-table text-muted">
+                                <tr><td>Gender, Age</td><td class="text-end text-dark fw-semibold">Male, 24y</td></tr>
+                                <tr><td>Physician</td><td class="text-end text-dark fw-semibold">Dr. Ronald</td></tr>
+                                <tr><td>Last Consultation</td><td class="text-end text-dark fw-semibold">May 12, 2026</td></tr>
+                                <tr><td>Appointments</td><td class="text-end text-dark fw-semibold">15 May 2026 8:00 am</td></tr>
+                                <tr><td>Status</td><td class="text-end"><span class="status-badge bg-warning bg-opacity-25 text-warning">Under Observation</span></td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="patient-card">
+                            <div class="pc-header">
+                                <img src="https://ui-avatars.com/api/?name=Fasai+Areyanukul&background=fce7f3&color=0284c7">
+                                <div><h6 class="fw-bold mb-0 text-dark">Fasai Areyanukul</h6><span class="small text-primary"><i class="bi bi-telephone"></i> Phone</span></div>
+                            </div>
+                            <table class="pc-table text-muted">
+                                <tr><td>Gender, Age</td><td class="text-end text-dark fw-semibold">Female, 25y</td></tr>
+                                <tr><td>Physician</td><td class="text-end text-dark fw-semibold">Dr. Cameron</td></tr>
+                                <tr><td>Last Consultation</td><td class="text-end text-dark fw-semibold">May 20, 2026</td></tr>
+                                <tr><td>Appointments</td><td class="text-end text-dark fw-semibold">15 May 2026 9:00 am</td></tr>
+                                <tr><td>Status</td><td class="text-end"><span class="status-badge bg-success bg-opacity-25 text-success">Recovered</span></td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="patient-card">
+                            <div class="pc-header">
+                                <img src="https://ui-avatars.com/api/?name=Floyd+Miles&background=ffedd5&color=0284c7">
+                                <div><h6 class="fw-bold mb-0 text-dark">Floyd Miles</h6><span class="small text-primary"><i class="bi bi-telephone"></i> Phone</span></div>
+                            </div>
+                            <table class="pc-table text-muted">
+                                <tr><td>Gender, Age</td><td class="text-end text-dark fw-semibold">Male, 24y</td></tr>
+                                <tr><td>Physician</td><td class="text-end text-dark fw-semibold">Dr. Brandon</td></tr>
+                                <tr><td>Last Consultation</td><td class="text-end text-dark fw-semibold">Sep 24, 2026</td></tr>
+                                <tr><td>Appointments</td><td class="text-end text-dark fw-semibold">15 May 2026 9:30 am</td></tr>
+                                <tr><td>Status</td><td class="text-end"><span class="status-badge bg-primary bg-opacity-25 text-primary">Under Treatment</span></td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="viewAdmin" class="view-section bg-admin">
+        <div class="crex-container">
+            
+            <div class="crex-topnav">
+                <div class="crex-pill">
+                    <div class="crex-item active">Dashboard</div>
+                    <div class="crex-item">Registrasi</div>
+                    <div class="crex-item">Kamar RS</div>
+                    <div class="crex-item text-danger" onclick="logout()">Logout</div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-end mb-4">
+                <h1 class="fw-bold mb-0" style="color: #0f3057; font-size: 2.5rem;">Welcome in, Admin</h1>
+                <div class="d-flex gap-4 text-center">
+                    <div><h3 class="fw-bold mb-0" style="color:#0f3057;">92</h3><small class="text-muted">Antrean</small></div>
+                    <div><h3 class="fw-bold mb-0" style="color:#0f3057;">75</h3><small class="text-muted">BPJS</small></div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="crex-profile-card">
+                        <img src="https://ui-avatars.com/api/?name=Admin+Nixtio&background=fff&color=0ea5e9">
+                        <h4 class="fw-bold" style="color: #0f3057;">Admin Nixtio</h4>
+                        <p class="text-muted small mb-4">Registrasi & Verifikasi</p>
+                        <span class="badge bg-primary bg-opacity-10 text-primary px-4 py-2 rounded-pill mt-4">Active Duty</span>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="crex-stat-box">
+                        <h5 class="fw-bold mb-4" style="color: #0f3057;">Waktu Antrean</h5>
+                        <h1 class="display-4 fw-bold text-primary mb-0">6.1 h</h1>
+                        <p class="small text-muted mb-4">Rata-rata waktu tunggu pasien</p>
+                        
+                        <div class="d-flex align-items-end gap-2" style="height: 80px;">
+                            <div style="width: 20%; background: #94a3b8; height: 40%; border-radius: 5px;"></div>
+                            <div style="width: 20%; background: #0f3057; height: 80%; border-radius: 5px;"></div>
+                            <div style="width: 20%; background: #3b82f6; height: 100%; border-radius: 5px;"></div>
+                            <div style="width: 20%; background: #94a3b8; height: 30%; border-radius: 5px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="crex-dark-card shadow-lg">
+                        <h5 class="fw-bold mb-4">Pengecekan BPJS</h5>
+                        
+                        <div class="bpjs-input-group">
+                            <input type="text" id="adminInput" placeholder="Ketik nama: John / Jane">
+                            <button onclick="cekBpjsAdmin()">Check</button>
+                        </div>
+                        
+                        <div id="hasilAdmin" class="d-none mt-4 p-3 bg-white text-dark rounded-4 shadow-sm">
+                            <h6 class="fw-bold mb-1" id="resNamaAdmin">Nama Pasien</h6>
+                            <div class="mb-3" id="resStatusAdmin">Status BPJS</div>
+                            <div id="btnAksiAdmin"></div>
+                        </div>
+
+                        <div class="mt-4 small opacity-75">
+                            <div class="d-flex align-items-center gap-3 mb-2"><i class="bi bi-check-circle-fill text-info"></i> Verify John (Done)</div>
+                            <div class="d-flex align-items-center gap-3"><i class="bi bi-circle"></i> Verify Ashley</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- 1. Router Logic (Pindah Halaman) ---
+        function prosesLogin() {
+            const user = document.getElementById('loginUsername').value.toLowerCase().trim();
+            const views = document.querySelectorAll('.view-section');
+            
+            if(user !== 'pasien' && user !== 'dokter' && user !== 'admin') {
+                alert('Username salah! Harap ketik: pasien, dokter, atau admin'); return;
+            }
+
+            views.forEach(el => el.classList.remove('active'));
+            document.body.classList.remove('login-mode');
+
+            if(user === 'pasien') {
+                document.getElementById('viewPasien').classList.add('active');
+                document.body.className = 'bg-pasien';
+            } else if(user === 'dokter') {
+                document.getElementById('viewDokter').classList.add('active');
+                document.body.className = 'bg-dokter';
+            } else if(user === 'admin') {
+                document.getElementById('viewAdmin').classList.add('active');
+                document.body.className = 'bg-admin';
+            }
+        }
+
+        // --- 2. Logout ---
+        function logout() {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('viewLogin').classList.add('active');
+            document.getElementById('loginUsername').value = '';
+            document.body.className = 'login-mode'; 
+        }
+
+        // --- 3. Ashley Pasien: Ganti KK ---
+        function gantiAshley(nama, role, blood, height, weight, diag, drugs, dateActive, element) {
+            document.getElementById('ashNameTitle').innerText = nama + "!";
+            document.getElementById('ashNameProfile').innerText = nama + " Black";
+            document.getElementById('ashEmail').innerText = nama.toLowerCase() + ".black@gmail.com";
+            document.getElementById('ashBlood').innerText = blood;
+            document.getElementById('ashHeight').innerText = height;
+            document.getElementById('ashWeight').innerText = weight;
+            document.getElementById('ashDiag').innerText = diag;
+            document.getElementById('ashDrugs').innerText = drugs;
+            document.getElementById('ashFoto').src = `https://ui-avatars.com/api/?name=${nama}&background=6cb7b7&color=fff`;
+
+            document.querySelectorAll('.cal-day').forEach(day => {
+                day.classList.remove('active');
+                if (day.innerText === dateActive && !day.classList.contains('text-muted')) { day.classList.add('active'); }
+            });
+
+            document.querySelectorAll('.kk-tab').forEach(tab => tab.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // --- 4. Crextio Admin: Cek BPJS ---
+        function cekBpjsAdmin() {
+            const input = document.getElementById('adminInput').value.toLowerCase().trim();
+            const hasilBox = document.getElementById('hasilAdmin');
+            const resNama = document.getElementById('resNamaAdmin');
+            const resStatus = document.getElementById('resStatusAdmin');
+            const btnAksi = document.getElementById('btnAksiAdmin');
+
+            if(input === '') { alert('Nama tidak boleh kosong!'); return; }
+
+            hasilBox.classList.remove('d-none');
+            
+            if(input.includes('john')) {
+                resNama.innerText = "John Black (Ayah)";
+                resStatus.innerHTML = "<span class='badge bg-danger fs-6 mb-2'>BPJS Menunggak</span><p class='small text-muted m-0 lh-sm'>Pasien belum membayar tagihan.</p>";
+                btnAksi.innerHTML = `<button class="btn btn-warning w-100 fw-bold btn-sm mt-2" onclick="alert('Diubah ke PASIEN UMUM.')">Jadikan Pasien Umum</button>`;
+            } else if (input.includes('jane') || input.includes('ashley')) {
+                resNama.innerText = input.includes('jane') ? "Jane Black (Ibu)" : "Ashley Black (Anak)";
+                resStatus.innerHTML = "<span class='badge bg-success fs-6 mb-2'>BPJS Aktif</span><p class='small text-muted m-0 lh-sm'>Data valid. Pasien berhak layanan penuh.</p>";
+                btnAksi.innerHTML = `<button class="btn btn-primary w-100 fw-bold btn-sm mt-2" onclick="alert('Antrean dicetak!')">Cetak Antrean BPJS</button>`;
+            } else {
+                resNama.innerText = "Tidak Ditemukan";
+                resStatus.innerHTML = "<span class='text-muted small'>Nama salah.</span>";
+                btnAksi.innerHTML = "";
+            }
+        }
+    </script>
+</body>
+</html>
